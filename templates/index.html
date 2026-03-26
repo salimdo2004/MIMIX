@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DOU Chatbot</title>
+<link rel="stylesheet" href="../style/style.css">
+
+</head>
+
+<body>
+
+<div class="app-container">
+
+<div class="sidebar">
+    <div class="sidebar-title">Mon Chat</div>
+    <button onclick="newChat()">➕ New Chat</button>
+    <input type="text" class="search-box" placeholder="🔍 Recherche..." onkeyup="searchChats(this.value)">
+    <div id="chat-list"></div>
+    <a href="key.html" class="key-link">🔑 API Key</a>
+</div>
+
+<div class="chat-container">
+
+    <div class="chat-header">
+        <h2>MiMiX</h2>
+
+        <div class="user-menu">
+            <div class="user-icon" onclick="toggleMenu()">👤</div>
+        <div id="dropdown-menu" class="dropdown">
+            <div id="auth-btn" onclick="handleAuth()"></div>
+            <div onclick="settings()">⚙️ Paramètres</div>
+            <div id="theme-btn" onclick="toggleTheme()"></div>
+        </div>
+        </div>
+    </div>
+
+    <div id="chat-box" class="chat-box"></div>
+
+    <div class="chat-input">
+        <input type="text" id="message-input" placeholder="Écrire un message...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+</div>
+</div>
+
+<div id="login-bar" class="login-bar">
+    ⚠️ Vous devez vous connecter pour continuer.
+    <button onclick="window.location.href='login.html'">Se connecter</button>
+</div>
+
+</body>
+
+<script src="../js/scripts.js"></script>
+</html>

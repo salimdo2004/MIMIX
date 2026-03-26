@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Gestion API Key</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6f8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Carte */
+.container {
+    background: white;
+    padding: 30px;
+    width: 400px;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    text-align: center;
+    animation: fadeIn 0.5s ease;
+}
+
+h2 {
+    margin-bottom: 20px;
+}
+
+/* Zone clé */
+.key-box {
+    background: #eef2f7;
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 16px;
+    word-break: break-all;
+    margin-bottom: 20px;
+}
+
+/* Boutons */
+button {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    margin: 5px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    background: #0056b3;
+    transform: scale(1.05);
+}
+
+.back {
+    background: #6c757d;
+}
+
+.back:hover {
+    background: #545b62;
+}
+
+@keyframes fadeIn {
+    from {opacity: 0; transform: translateY(20px);}
+    to {opacity: 1; transform: translateY(0);}
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>🔑 Gestion de votre API Key</h2>
+
+    <div class="key-box" id="apiKey">
+        Chargement...
+    </div>
+
+    <button onclick="generateKey()">Générer une nouvelle clé</button>
+    <br>
+    <button class="back" onclick="window.location.href='/'">Retour au Chat</button>
+</div>
+
+<script>
+function loadKey() {
+    fetch("/get_key")
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById("apiKey").innerText = data.key;
+    })
+    .catch(error => {
+        document.getElementById("apiKey").innerText = "Erreur de chargement";
+        console.error(error);
+    });
+}
+
+function generateKey() {
+    fetch("/generate_key", {
+        method: "POST"
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById("apiKey").innerText = data.key;
+    })
+    .catch(error => {
+        alert("Erreur génération clé");
+        console.error(error);
+    });
+}
+
+loadKey();
+</script>
+
+</body>
+</html>

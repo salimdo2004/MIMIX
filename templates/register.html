@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Register</title>
+
+</head>
+<style>
+    *{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+body{
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+background: linear-gradient(135deg, #ffca3a, #ff595e);
+  background-size: 400% 400%;
+  animation: gradientMove 8s ease infinite;
+}
+
+@keyframes gradientMove {
+  0%{background-position:0% 50%;}
+  50%{background-position:100% 50%;}
+  100%{background-position:0% 50%;}
+}
+
+.tout{
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(15px);
+  padding:40px;
+  border-radius:20px;
+  width:350px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  animation: fadeIn 1s ease;
+}
+
+@keyframes fadeIn {
+  from{
+    opacity:0;
+    transform: translateY(30px);
+  }
+  to{
+    opacity:1;
+    transform: translateY(0);
+  }
+}
+
+h2{
+  text-align:center;
+  margin-bottom:20px;
+  color:white;
+}
+
+label{
+  color:white;
+  font-size:14px;
+}
+
+input{
+  width:100%;
+  padding:10px;
+  margin:10px 0 15px;
+  border:none;
+  border-radius:10px;
+  outline:none;
+}
+
+/* bouton */
+button{
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:10px;
+  background: #fff;
+  color:#ff7e5f;
+  font-weight:bold;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+button:hover{
+  background:#ff7e5f;
+  color:white;
+  transform: scale(1.05);
+}
+
+/* lien */
+a{
+  display:block;
+  text-align:center;
+  margin-top:15px;
+  color:white;
+  text-decoration:none;
+  font-size:14px;
+}
+
+a:hover{
+  text-decoration:underline;
+}
+
+/* show password */
+.password-box{
+  position:relative;
+}
+
+.password-box span{
+  position:absolute;
+  right:10px;
+  top:50%;
+  transform:translateY(-50%);
+  cursor:pointer;
+  font-size:14px;
+  color:#333;
+}
+</style>
+<body>
+<div class="tout">
+<h2>Créer un Compte</h2>
+
+<form id="registerForm">
+
+<label>Nom</label>
+<input type="text" id="name" required>
+
+<label>Email</label>
+<input type="email" id="email" required>
+
+<label>Téléphone</label>
+<input type="tel" id="phone" required>
+
+<label>Mot de passe</label>
+<input type="password" id="password" required>
+
+<button type="submit">Créer</button>
+<a href="login.html">creer compte</a>
+</form>
+</div>
+<script>
+
+document.getElementById("registerForm").addEventListener("submit", async function(e){
+
+e.preventDefault();
+
+const data = {
+name: document.getElementById("name").value,
+email: document.getElementById("email").value,
+phone: document.getElementById("phone").value,
+password: document.getElementById("password").value
+}
+
+const res = await fetch("http://localhost:3000/register",{
+method:"POST",
+headers:{ "Content-Type":"application/json"},
+body: JSON.stringify(data)
+})
+
+const result = await res.json()
+
+alert("Utilisateur créé")
+
+})
+
+</script>
+
+</body>
+</html>

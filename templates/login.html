@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Login</title>
+<link rel="stylesheet" href="../style/styless.css">
+</head>
+
+<body>
+<div class="tout">
+
+<h2>Connexion</h2>
+
+<form id="loginForm">
+
+<label>Email</label>
+<input type="email" id="email" required>
+
+<label>Mot de passe</label>
+<input type="password" id="password" required>
+
+<button type="submit">Se connecter</button>
+<a class="links" href="register.html">connecte & compte</a>
+</form>
+</div>  
+<script>
+document.getElementById("loginForm").addEventListener("submit", async function(e){
+
+  e.preventDefault();
+
+  const data = {
+    email: document.getElementById("email").value,
+    password: document.getElementById("password").value
+  }
+
+  try {
+    const res = await fetch("http://localhost:3000/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
+
+    const result = await res.json(); // ✅ UNE SEULE FOIS
+
+    if(res.ok){
+      // stocker token
+      localStorage.setItem("token", result.token);
+
+      alert("Connexion réussie ✅");
+
+      // redirection
+      window.location.href = "index.html";
+
+    } else {
+      alert(result.error || "Email ou mot de passe incorrect ❌");
+    }
+
+  } catch (err) {
+    console.error(err);
+    alert("Erreur serveur ❌");
+  }
+
+});
+</script>
+
+</body>
+</html>
