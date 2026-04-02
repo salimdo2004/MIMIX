@@ -1,2 +1,0 @@
-# MIMIX
-PROJECT Chatbot 

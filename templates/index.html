@@ -4,7 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DOU Chatbot</title>
-<link rel="stylesheet" href="../style/style.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='style/style.css') }}">
+<script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
 
 </head>
 
@@ -17,7 +18,7 @@
     <button onclick="newChat()">➕ New Chat</button>
     <input type="text" class="search-box" placeholder="🔍 Recherche..." onkeyup="searchChats(this.value)">
     <div id="chat-list"></div>
-    <a href="key.html" class="key-link">🔑 API Key</a>
+    <a href="/key" class="key-link">🔑 API Key</a>
 </div>
 
 <div class="chat-container">
@@ -47,10 +48,9 @@
 
 <div id="login-bar" class="login-bar">
     ⚠️ Vous devez vous connecter pour continuer.
-    <button onclick="window.location.href='login.html'">Se connecter</button>
+    <button onclick="window.location.href='/login'">Se connecter</button>
 </div>
 
 </body>
-
-<script src="../js/scripts.js"></script>
+<script src="../static/js/scripts.js"></script>
 </html>

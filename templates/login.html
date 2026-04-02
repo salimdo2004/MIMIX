@@ -3,7 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <title>Login</title>
-<link rel="stylesheet" href="../style/styless.css">
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style/styless.css') }}">
+<script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
 </head>
 
 <body>
@@ -20,7 +22,7 @@
 <input type="password" id="password" required>
 
 <button type="submit">Se connecter</button>
-<a class="links" href="register.html">connecte & compte</a>
+<a class="links" href="/register">connecte & compte</a>
 </form>
 </div>  
 <script>
@@ -49,7 +51,7 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
       alert("Connexion réussie ✅");
 
       // redirection
-      window.location.href = "index.html";
+      window.location.href = "/index";
 
     } else {
       alert(result.error || "Email ou mot de passe incorrect ❌");
