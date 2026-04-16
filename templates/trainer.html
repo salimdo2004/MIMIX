@@ -1,16 +1,15 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DOU Chatbot</title>
-<link rel="stylesheet" href="../static/style/style.css">
-<link rel="stylesheet" href="{{ url_for('static', filename='style/style.css') }}">
-<script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../static/style/style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/style.css') }}">
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </head>
-
 <body>
+    
 
 <div class="app-container">
 
@@ -32,6 +31,7 @@
         <div id="dropdown-menu" class="dropdown">
             <div id="auth-btn" onclick="handleAuth()"></div>
             <div onclick="settings()">⚙️ Paramètres</div>
+            <div id="auth_ents">Data</div>
             <div id="theme-btn" onclick="toggleTheme()"></div>
         </div>
         </div>
@@ -53,5 +53,5 @@
 </div>
 
 </body>
-<script src="../static/js/scripts.js"></script>
+<script src="../static/js/main.js"></script>
 </html>

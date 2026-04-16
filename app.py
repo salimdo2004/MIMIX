@@ -5,6 +5,8 @@ import random
 import joblib
 import re
 import wikipedia
+import requests
+from bs4 import BeautifulSoup
 from difflib import SequenceMatcher
 from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
@@ -53,11 +55,7 @@ fallback_responses = [
     "Je suis encore en apprentissage 😅",
     "Désolé, je n’ai pas compris votre demande.",
     "Pouvez-vous préciser votre question ?",
-    "Je ne suis pas sûr de comprendre 🤷‍♂️",
-    "Essayez de poser la question différemment 😊",
-    "Je suis un peu perdu 😅, pouvez-vous reformuler ?",
-    "Je n’ai pas la réponse pour le moment.",
-    "Pouvez-vous clarifier votre demande ?"
+    "Je ne suis pas sûr de comprendre 🤷‍♂️"
 ]
 
 # ======================
@@ -75,7 +73,7 @@ def clean_text(text):
     return text.strip()
 
 # ======================
-# RECHERCHE INTELLIGENTE (data.json)
+# RECHERCHE PATTERN
 # ======================
 def search_in_patterns(user_input):
     user_input_clean = clean_text(user_input)
@@ -84,25 +82,24 @@ def search_in_patterns(user_input):
     best_responses = []
 
     for intent in intents["intents"]:
-        questions = intent.get("questions", [])
-        responses = intent.get("responses", [])
-
-        for question in questions:
-            question_clean = clean_text(question)
-            score = SequenceMatcher(None, user_input_clean, question_clean).ratio()
+        for question in intent.get("questions", []):
+            score = SequenceMatcher(
+                None,
+                user_input_clean,
+                clean_text(question)
+            ).ratio()
 
             if score > best_score:
                 best_score = score
-                best_responses = responses
+                best_responses = intent.get("responses", [])
 
     if best_score >= 0.7:
-        print(f"✅ Match data.json (score={best_score:.2f})")
         return random.choice(best_responses)
 
     return None
 
 # ======================
-# PREDICTION ML
+# MACHINE LEARNING
 # ======================
 def predict_intent(text):
     if model is None or vectorizer is None:
@@ -122,21 +119,46 @@ def predict_intent(text):
         return None, proba
 
     except Exception as e:
-        print("❌ Erreur prédiction :", e)
+        print("❌ Erreur ML :", e)
         return None, 0
 
 # ======================
-# WIKIPEDIA SEARCH
+# FILTRE WIKIPEDIA
+# ======================
+def is_good_wiki_query(text):
+    words = text.split()
+
+    if len(words) > 5:
+        return False
+
+    blocked = ["achat", "maison", "location", "prix", "rabat"]
+    if any(word in text for word in blocked):
+        return False
+
+    return True
+
+# ======================
+# WIKIPEDIA AMÉLIORÉ
 # ======================
 def search_wikipedia(query):
     try:
         summary = wikipedia.summary(query, sentences=2)
         page = wikipedia.page(query)
-        return summary + f"\n👉 Lire plus : {page.url}"
+
+        response = (
+            f"📚 Voici ce que j’ai trouvé sur *{query}* :\n\n"
+            f"{summary}\n\n"
+        )
+
+        return response
+
     except wikipedia.exceptions.DisambiguationError as e:
-        return f"Votre question est ambiguë 🤔. Essayez : {e.options[:3]}"
+        suggestions = ", ".join(e.options[:3])
+        return f"🤔 Question ambiguë.\n👉 Essayez : {suggestions}"
+
     except wikipedia.exceptions.PageError:
         return None
+
     except Exception as e:
         print("Erreur Wikipedia:", e)
         return None
@@ -156,10 +178,10 @@ def predict():
         current_time = time.time()
 
         if user_input == "":
-            return jsonify({"response": "Veuillez écrire un message.", "score": 0})
+            return jsonify({"response": "Veuillez écrire un message."})
 
         # ======================
-        # MEMOIRE (60 sec)
+        # MEMOIRE
         # ======================
         if user_input in user_memory:
             old_response, last_time = user_memory[user_input]
@@ -167,7 +189,7 @@ def predict():
                 return jsonify({"response": old_response, "score": "memoire"})
 
         # ======================
-        # 1️⃣ DATA.JSON
+        # 1️⃣ PATTERN
         # ======================
         response = search_in_patterns(user_input)
         if response:
@@ -175,17 +197,17 @@ def predict():
             return jsonify({"response": response, "score": "pattern"})
 
         # ======================
-        # 2️⃣ MACHINE LEARNING
+        # 2️⃣ ML
         # ======================
         response, score = predict_intent(user_input)
 
         # ======================
-        # 3️⃣ WIKIPEDIA (SMART FALLBACK)
+        # 3️⃣ WIKIPEDIA
         # ======================
-        if score < 10 or response is None:
-            print("⚠️ Question non comprise → Wikipedia")
+        if (score < 10 or response is None) and is_good_wiki_query(user_input):
 
-            wiki_response = search_wikipedia(user_input)
+            keywords = " ".join(user_input.split()[:3])
+            wiki_response = search_wikipedia(keywords)
 
             if wiki_response:
                 return jsonify({
@@ -194,32 +216,20 @@ def predict():
                     "score": 50
                 })
 
-            # ======================
-            # 4️⃣ FALLBACK NORMAL
-            # ======================
-            with open("historique_questions.txt", "a", encoding="utf-8") as f:
-                f.write(f"Question: {user_input}\n")
-
-                if wiki_response:
-                    f.write(f"Réponse: {wiki_response}\n")
-                else:
-                    f.write("Réponse: Aucune trouvée\n")
-
-                f.write("-" * 50 + "\n")
-            response = random.choice(fallback_responses)
-
-            return jsonify({"response": response, "score": 0})
-
         # ======================
-        # SAVE MEMORY
+        # 4️⃣ FALLBACK
         # ======================
-        user_memory[user_input] = (response, current_time)
+        with open("historique_questions.txt", "a", encoding="utf-8") as f:
+            f.write(f"Question: {user_input}\n")  
 
-        return jsonify({"response": response, "score": score})
+
+        response = random.choice(fallback_responses)
+
+        return jsonify({"response": response, "score": 0})
 
     except Exception as e:
         print("❌ Erreur serveur :", e)
-        return jsonify({"response": "Erreur serveur.", "score": 0})
+        return jsonify({"response": "Erreur serveur."})
 
 # ======================
 # AUTRES ROUTES
@@ -248,6 +258,13 @@ def apikey():
 def index():
     return render_template("index.html")
 
+@app.route('/trainer')
+def trainer():
+    return render_template('trainer.html')
+
+@app.route("/DATA")
+def datas():
+    return render_template("Data.html")
 # ======================
 # RUN
 # ======================

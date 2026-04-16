@@ -297,3 +297,10 @@ function afficherMenuTrainer() {
 window.onload = function () {
   afficherMenuTrainer();
 };
+
+
+
+//partie  auth_ents: partie aller  ala page de ajouter data
+ document.getElementById("auth_ents").addEventListener("click", function () {
+    window.location.href = "/DATA"
+ })

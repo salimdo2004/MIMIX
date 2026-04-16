@@ -24,3 +24,32 @@ hello  everyoune
 aas
 as
 as
+Question: aider moi
+Réponse: Aucune trouvée
+--------------------------------------------------
+Question: aider ta soeur
+Réponse: Aucune trouvée
+--------------------------------------------------
+Question: je veux être contacté
+Réponse: Aucune trouvée
+--------------------------------------------------
+Question: hhhh
+Réponse: Aucune trouvée
+--------------------------------------------------
+Question: informatique
+Réponse: Aucune trouvée
+--------------------------------------------------
+Question: informatique
+Réponse: Aucune trouvée
+--------------------------------------------------
+Question: météo rabat
+Réponse: Aucune trouvée
+--------------------------------------------------
+Question: je veux acheter maison à rabat
+Question: aider moi
+Question: c’est combien ?
+Question: question ambiguë.
+Question: ما هي خدماتكم؟
+Question: c’est quoi wikipedia ?
+Question: à quoi sert wikipedia ?
+Question: ca va mimix
