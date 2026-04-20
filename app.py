@@ -10,7 +10,8 @@ from bs4 import BeautifulSoup
 from difflib import SequenceMatcher
 from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
-
+from flask import send_from_directory
+from werkzeug.utils import secure_filename
 app = Flask(__name__)
 CORS(app)
 
@@ -265,6 +266,49 @@ def trainer():
 @app.route("/DATA")
 def datas():
     return render_template("Data.html")
+
+
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_FOLDER = os.path.join(BASE_DIR, "Datas")
+
+os.makedirs(DATA_FOLDER, exist_ok=True)
+
+@app.route('/upload', methods=['POST'])
+def upload_file():
+    if 'files' not in request.files:
+        return jsonify({"error": "Aucun fichier envoyé"}), 400
+
+    files = request.files.getlist('files')
+
+    if len(files) == 0:
+        return jsonify({"error": "Aucun fichier sélectionné"}), 400
+
+    for file in files:
+        if file.filename == '':
+            continue
+
+        filename = secure_filename(file.filename)
+        filepath = os.path.join(DATA_FOLDER, filename)
+
+        print("Saving to:", filepath)  # 🔥 DEBUG
+
+        file.save(filepath)
+
+    return jsonify({"message": "Fichiers enregistrés avec succès"})
+@app.route('/list-data')
+def list_data():
+    if not os.path.exists(DATA_FOLDER):
+        return {"error": "Dossier Datas introuvable"}, 404
+
+    files = os.listdir(DATA_FOLDER)
+    return files
+
+
+
+@app.route('/data/<filename>')
+def get_file(filename):
+    return send_from_directory(DATA_FOLDER, filename)
 # ======================
 # RUN
 # ======================

@@ -287,7 +287,7 @@ function afficherMenuTrainer() {
     btn.innerText = "Ajouter Data";
 
     btn.onclick = () => {
-      window.location.href = "/trainer";
+      window.location.href = "/DATA";
     };
 
     menu.appendChild(btn);
@@ -298,9 +298,137 @@ window.onload = function () {
   afficherMenuTrainer();
 };
 
+//afichage de  contenu  de Datas
+document.addEventListener("DOMContentLoaded", () => {
+  const fileList = document.getElementById("fileList");
+  const container = document.getElementById("tableContainer");
+
+  fetch("/list-data")
+    .then(res => res.json())
+    .then(files => {
+      files.forEach(file => {
+        const li = document.createElement("li");
+
+        const link = document.createElement("a");
+        link.textContent = file;
+        link.href = "#";
+
+        link.addEventListener("click", (e) => {
+          e.preventDefault();
+
+          fetch(`/data/${file}`)
+            .then(res => res.text())
+            .then(data => {
+
+              // nettoyer ancien contenu
+              container.innerHTML = "";
+
+              // convertir en lignes
+              const lines = data.trim().split("\n");
+
+              const table = document.createElement("table");
+              table.style.width = "100%";
+              table.border = "1";
+
+              lines.forEach((line, index) => {
+                const tr = document.createElement("tr");
+
+                // split par virgule (CSV simple)
+                const cols = line.split(",");
+
+                cols.forEach(col => {
+                  const cell = index === 0 ? document.createElement("th") : document.createElement("td");
+                  cell.textContent = col.trim();
+                  tr.appendChild(cell);
+                });
+
+                table.appendChild(tr);
+              });
+
+              container.appendChild(table);
+            });
+        });
+
+        li.appendChild(link);
+        fileList.appendChild(li);
+      });
+    });
+});
 
 
-//partie  auth_ents: partie aller  ala page de ajouter data
- document.getElementById("auth_ents").addEventListener("click", function () {
-    window.location.href = "/DATA"
- })
+
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  const uploadBtn = document.getElementById("uploadBtn");
+  const fileInput = document.getElementById("fileInput");
+
+  if (!uploadBtn || !fileInput) {
+    console.error("Elements HTML introuvables !");
+    return;
+  }
+
+  uploadBtn.addEventListener("click", async () => {
+    console.log("BTN CLICK OK");
+
+    const files = fileInput.files;
+
+    if (!files || files.length === 0) {
+      alert("⚠️ Choisir au moins un fichier !");
+      return;
+    }
+
+    const formData = new FormData();
+
+    for (let file of files) {
+      formData.append("files", file); // backend doit lire "files"
+    }
+
+    try {
+      const res = await fetch("/upload", {
+        method: "POST",
+        body: formData
+      });
+
+      if (!res.ok) {
+        throw new Error("Erreur serveur");
+      }
+
+      const data = await res.json();
+
+      console.log(data);
+
+      // ✅ Feedback utilisateur propre
+      alert(data.message || "Upload réussi ✅");
+
+      // ✅ reset input
+      fileInput.value = "";
+
+      // ✅ si backend renvoie liste fichiers
+      if (data.files) {
+        updateFileList(data.files);
+      }
+
+    } catch (err) {
+      console.error(err);
+      alert("❌ Erreur upload !");
+    }
+  });
+
+});
+
+/* OPTIONAL: update UI list */
+function updateFileList(files) {
+  const fileList = document.getElementById("fileList");
+  if (!fileList) return;
+
+  fileList.innerHTML = "";
+
+  files.forEach(file => {
+    const div = document.createElement("div");
+    div.className = "file-item";
+    div.textContent = file;
+    fileList.appendChild(div);
+  });
+}
+

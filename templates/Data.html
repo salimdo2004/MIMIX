@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../static/style/designer.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='style/designer.css') }}">
+
+</head>
+<body>
+
+<div class="upload-section">
+  <h2>📂 Upload des fichiers</h2>
+  <div class="upload-box">
+    <input type="file" id="fileInput" accept=".json,.xml,.csv" multiple>
+    <button id="uploadBtn">Upload</button>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- TABLE -->
+  <div class="content" >
+    <h3>Résultat :</h3>
+    <div id="tableContainer">Clique sur un fichier pour afficher</div>
+  </div>
+
+  <!-- RIGHT FILE LIST -->
+  <div class="sidebar">
+    <h3>📁 Fichiers</h3>
+    <div id="fileList"></div>
+  </div>
+
+</div>
+
+</body>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script src="../static/js/main.js"></script>
+</html>

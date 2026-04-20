@@ -53,3 +53,4 @@ Question: ما هي خدماتكم؟
 Question: c’est quoi wikipedia ?
 Question: à quoi sert wikipedia ?
 Question: ca va mimix
+Question: achat
